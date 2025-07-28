@@ -85,15 +85,15 @@ export default function ChatInterface() {
   };
 
   return (
-    <Card className="w-full max-w-3xl h-[85vh] flex flex-col shadow-2xl rounded-xl">
-      <CardHeader className="flex flex-row items-center justify-between border-b">
+    <Card className="w-full max-w-3xl h-[95vh] flex flex-col shadow-2xl rounded-xl">
+      <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b">
         <div className="flex items-center space-x-3">
           <Sparkles className="h-6 w-6 text-primary" />
           <CardTitle className="font-headline text-xl">Mocktopus</CardTitle>
         </div>
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 self-end sm:self-center">
           <div className="flex items-center space-x-2">
-            <Label htmlFor="sarcastic-mode" className="text-sm font-medium">Sarcastic Mode</Label>
+            <Label htmlFor="sarcastic-mode" className="text-sm font-medium whitespace-nowrap">Sarcastic Mode</Label>
             <Switch
               id="sarcastic-mode"
               checked={sarcasticMode}
