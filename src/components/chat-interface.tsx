@@ -44,15 +44,15 @@ export default function ChatInterface() {
     setIsLoading(true);
 
     try {
-      const result = await maintainContextConversation({
+      const { response, updatedConversationHistory } = await maintainContextConversation({
         userInput: currentInput,
         conversationHistory,
         sarcasticMode,
       });
 
-      const assistantMessage: Message = { role: "assistant", content: result.response };
+      const assistantMessage: Message = { role: "assistant", content: response };
       setMessages((prev) => [...prev, assistantMessage]);
-      setConversationHistory(result.updatedConversationHistory);
+      setConversationHistory(updatedConversationHistory);
     } catch (error) {
       console.error("Error calling AI:", error);
       const errorMessage: Message = { role: "assistant", content: "My circuits are buzzing with errors. I couldn't process that. Please try again." };
@@ -72,7 +72,7 @@ export default function ChatInterface() {
       <CardHeader className="flex flex-row items-center justify-between border-b">
         <div className="flex items-center space-x-3">
           <Sparkles className="h-6 w-6 text-primary" />
-          <CardTitle className="font-headline text-xl">Tongue-in-Cheek AI</CardTitle>
+          <CardTitle className="font-headline text-xl">Mocktopus</CardTitle>
         </div>
         <div className="flex items-center space-x-2">
           <Label htmlFor="sarcastic-mode" className="text-sm font-medium">Sarcastic Mode</Label>
