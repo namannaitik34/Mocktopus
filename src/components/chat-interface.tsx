@@ -68,7 +68,11 @@ export default function ChatInterface() {
       setConversationHistory(updatedConversationHistory);
     } catch (error) {
       console.error("Error calling AI:", error);
-      const errorMessage: Message = { role: "assistant", content: "My circuits are buzzing with errors. I couldn't process that. Please try again." };
+      let userFriendlyMessage = "My circuits are buzzing with errors. I couldn't process that. Please try again.";
+      if (error instanceof Error && error.message.includes('503')) {
+          userFriendlyMessage = "The AI is a bit overloaded right now. Please try again in a moment.";
+      }
+      const errorMessage: Message = { role: "assistant", content: userFriendlyMessage };
       setMessages((prev) => [...prev, errorMessage]);
       toast({
         variant: "destructive",
