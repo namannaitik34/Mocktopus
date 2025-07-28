@@ -44,20 +44,16 @@ const prompt = ai.definePrompt({
 
   Here's the conversation history:
   {{#each conversationHistory}}
-  {{#if (eq role \"user\")}}
-  User: {{{content}}}
+  {{#if (eq this.role "user")}}
+  User: {{{this.content}}}
   {{else}}
-  Assistant: {{{content}}}
+  Assistant: {{{this.content}}}
   {{/if}}
   {{/each}}
 
   Generate a response to the user input, and update the conversation history.
 
-  Format your response as follows:
-  {
-    "response": "AI response here",
-    "updatedConversationHistory": [...conversationHistory, { \"role\": \"assistant\", \"content\": \"AI response here\" }]
-  }
+  The user input is: {{{userInput}}}
   `,
 });
 
@@ -75,16 +71,15 @@ const maintainContextConversationFlow = ai.defineFlow(
       sarcasticMode,
     });
 
-    const response = JSON.parse(output!.response);
-
+    const assistantResponse = output!.response;
     const updatedConversationHistory = [
       ...(conversationHistory ?? []),
       {role: 'user', content: userInput},
-      {role: 'assistant', content: response.response},
+      {role: 'assistant', content: assistantResponse},
     ];
 
     return {
-      response: response.response,
+      response: assistantResponse,
       updatedConversationHistory: updatedConversationHistory,
     };
   }
