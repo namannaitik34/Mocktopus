@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, type FormEvent } from "react";
-import { maintainContextConversation, type MaintainContextConversationInput, type MaintainContextConversationOutput } from "@/ai/flows/maintain-context-conversation";
+import { maintainContextConversation, type MaintainContextConversationInput } from "@/ai/flows/maintain-context-conversation";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -44,7 +44,7 @@ export default function ChatInterface() {
     setIsLoading(true);
 
     try {
-      const result: MaintainContextConversationOutput = await maintainContextConversation({
+      const result = await maintainContextConversation({
         userInput: currentInput,
         conversationHistory,
         sarcasticMode,

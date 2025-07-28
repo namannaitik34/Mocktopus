@@ -23,13 +23,15 @@ export type MaintainContextConversationInput = z.infer<typeof MaintainContextCon
 
 const MaintainContextConversationOutputSchema = z.object({
   response: z.string().describe('The AI response to the user input.'),
-  updatedConversationHistory: z.array(z.object({role: z.enum(['user', 'assistant']), content: z.string()})).describe('The updated history of the conversation.'),
 });
 export type MaintainContextConversationOutput = z.infer<typeof MaintainContextConversationOutputSchema>;
 
 export async function maintainContextConversation(
   input: MaintainContextConversationInput
-): Promise<MaintainContextConversationOutput> {
+): Promise<{
+  response: string;
+  updatedConversationHistory: z.infer<typeof MaintainContextConversationInputSchema.shape.conversationHistory>;
+}> {
   return maintainContextConversationFlow(input);
 }
 
@@ -44,14 +46,14 @@ const prompt = ai.definePrompt({
 
   Here's the conversation history:
   {{#each conversationHistory}}
-  {{#if (eq role "user")}}
+  {{#if this.isUser}}
   User: {{{this.content}}}
   {{else}}
   Assistant: {{{this.content}}}
   {{/if}}
   {{/each}}
 
-  Generate a response to the user input, and update the conversation history.
+  Generate a response to the user input.
 
   The user input is: {{{userInput}}}
   `,
@@ -61,13 +63,22 @@ const maintainContextConversationFlow = ai.defineFlow(
   {
     name: 'maintainContextConversationFlow',
     inputSchema: MaintainContextConversationInputSchema,
-    outputSchema: MaintainContextConversationOutputSchema,
+    outputSchema: z.object({
+        response: z.string(),
+        updatedConversationHistory: z.array(z.object({role: z.enum(['user', 'assistant']), content: z.string()})),
+    })
   },
   async input => {
     const {userInput, conversationHistory, sarcasticMode} = input;
+
+    const processedHistory = (conversationHistory ?? []).map(m => ({
+        ...m,
+        isUser: m.role === 'user'
+    }));
+    
     const {output} = await prompt({
       userInput,
-      conversationHistory: conversationHistory ?? [],
+      conversationHistory: processedHistory as any,
       sarcasticMode,
     });
 
