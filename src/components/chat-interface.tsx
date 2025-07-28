@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, Sparkles } from "lucide-react";
+import { Send, Sparkles, Moon, Sun } from "lucide-react";
 import { ChatMessage } from "./chat-message";
 import { useToast } from "@/hooks/use-toast";
 
@@ -25,6 +25,7 @@ export default function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   const [sarcasticMode, setSarcasticMode] = useState(false);
   const [conversationHistory, setConversationHistory] = useState<ConversationHistory>([]);
+  const [theme, setTheme] = useState("light");
   const { toast } = useToast();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -32,6 +33,18 @@ export default function ChatInterface() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
+
+  useEffect(() => {
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -74,15 +87,22 @@ export default function ChatInterface() {
           <Sparkles className="h-6 w-6 text-primary" />
           <CardTitle className="font-headline text-xl">Mocktopus</CardTitle>
         </div>
-        <div className="flex items-center space-x-2">
-          <Label htmlFor="sarcastic-mode" className="text-sm font-medium">Sarcastic Mode</Label>
-          <Switch
-            id="sarcastic-mode"
-            checked={sarcasticMode}
-            onCheckedChange={setSarcasticMode}
-            disabled={isLoading}
-            aria-label="Toggle sarcastic mode"
-          />
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
+            <Label htmlFor="sarcastic-mode" className="text-sm font-medium">Sarcastic Mode</Label>
+            <Switch
+              id="sarcastic-mode"
+              checked={sarcasticMode}
+              onCheckedChange={setSarcasticMode}
+              disabled={isLoading}
+              aria-label="Toggle sarcastic mode"
+            />
+          </div>
+          <Button onClick={toggleTheme} variant="outline" size="icon" aria-label="Toggle theme">
+            <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+            <span className="sr-only">Toggle theme</span>
+          </Button>
         </div>
       </CardHeader>
       <CardContent className="flex-1 overflow-hidden p-0">
